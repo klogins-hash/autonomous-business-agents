@@ -25,7 +25,7 @@ services:
           cpus: '0.25'
           memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep -v grep | grep python || exit 1"]
+      test: ["CMD-SHELL", "test -f /app/main.py || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -52,7 +52,7 @@ services:
           cpus: '0.25'
           memory: 256M
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep -v grep | grep python || exit 1"]
+      test: ["CMD-SHELL", "test -f /app/main.py || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
