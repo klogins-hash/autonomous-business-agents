@@ -1,0 +1,59 @@
+# docker-compose.yml
+# Enhanced configuration with logging, resource limits, and health checks
+
+version: "3.8"
+
+services:
+  agent-1:
+    build:
+      context: ./agent-image
+    container_name: agent-1
+    volumes:
+      - ./agent-1-code:/app
+      - ./shared/logs:/logs
+    environment:
+      - AGENT_NAME=Agent-1
+      - APPROVAL_REQUIRED=true
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -v grep | grep python || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  agent-2:
+    build:
+      context: ./agent-image
+    container_name: agent-2
+    volumes:
+      - ./agent-2-code:/app
+      - ./shared/logs:/logs
+    environment:
+      - AGENT_NAME=Agent-2
+      - APPROVAL_REQUIRED=true
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -v grep | grep python || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
