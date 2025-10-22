@@ -1,5 +1,41 @@
+# Backup files
 docker-compose.yml.backup
+*.backup
+*.bak
+
+# Python cache
 __pycache__/
 *.pyc
+*.py[cod]
+*$py.class
+
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
+
+# Logs
 *.log
+shared/logs/*
+!shared/logs/.gitkeep
+
+# Shared workspace (agent-created content)
+shared/workspace/*
+!shared/workspace/.gitkeep
+
+# Docker volumes
+volumes/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
