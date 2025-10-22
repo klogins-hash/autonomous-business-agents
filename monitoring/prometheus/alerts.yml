@@ -1,0 +1,76 @@
+groups:
+  - name: agent_alerts
+    interval: 30s
+    rules:
+      # Agent down alert
+      - alert: AgentDown
+        expr: up{job="agents"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Agent {{ $labels.instance }} is down"
+          description: "Agent {{ $labels.instance }} has been down for more than 2 minutes."
+
+      # Container CPU usage
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} CPU usage is above 80% (current: {{ $value }}%)"
+
+      # Container memory usage
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} memory usage is above 85% (current: {{ $value }}%)"
+
+      # Container restart alert
+      - alert: ContainerRestart
+        expr: rate(container_last_seen[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} restarted"
+          description: "Container {{ $labels.name }} has restarted"
+
+  - name: system_alerts
+    interval: 30s
+    rules:
+      # Host CPU usage
+      - alert: HostHighCPU
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host CPU usage is critical"
+          description: "Host CPU usage is above 90% (current: {{ $value }}%)"
+
+      # Host memory usage
+      - alert: HostHighMemory
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host memory usage is critical"
+          description: "Host memory usage is above 90% (current: {{ $value }}%)"
+
+      # Host disk usage
+      - alert: HostHighDisk
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host disk usage is high"
+          description: "Host disk usage is above 85% (current: {{ $value }}%)"

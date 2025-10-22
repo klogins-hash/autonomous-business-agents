@@ -1,0 +1,52 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'autonomous-business-agents'
+    environment: 'production'
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Rule files
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # cAdvisor - Container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'cadvisor'
+
+  # Node Exporter - Host metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+
+  # Agent metrics (when we add metrics endpoints)
+  - job_name: 'agents'
+    static_configs:
+      - targets:
+        - 'agent-1:8000'
+        - 'agent-2:8000'
+        - 'agent-3:8000'
+        - 'agent-4:8000'
+        - 'agent-5:8000'
+        - 'agent-6:8000'
+        labels:
+          service: 'agents'
